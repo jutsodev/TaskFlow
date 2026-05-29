@@ -1,0 +1,114 @@
+name: Build Signed IPA
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        default: 'ad-hoc'
+        type: choice
+        options:
+          - ad-hoc
+          - enterprise
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Select Xcode version
+      run: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+    
+    - name: Install dependencies
+      run: |
+        # Если используются SPM зависимости
+        xcodebuild -resolvePackageDependencies \
+          -project TaskFlow.xcodeproj \
+          -scheme TaskFlow
+    
+    - name: Create build directory
+      run: mkdir -p build/Export
+    
+    - name: Build Archive
+      run: |
+        xcodebuild \
+          -project TaskFlow.xcodeproj \
+          -scheme TaskFlow \
+          -configuration Release \
+          -sdk iphoneos \
+          -derivedDataPath build \
+          -archivePath build/TaskFlow.xcarchive \
+          -verbose \
+          archive
+      
+    - name: Create unsigned ExportOptions.plist
+      run: |
+        cat > ExportOptions.plist <<'EOF'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>method</key>
+            <string>ad-hoc</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>thinning</key>
+            <string><none></string>
+            <key>destination</key>
+            <string>export</string>
+        </dict>
+        </plist>
+        EOF
+    
+    - name: Export IPA
+      run: |
+        xcodebuild \
+          -exportArchive \
+          -archivePath build/TaskFlow.xcarchive \
+          -exportPath build/Export \
+          -exportOptionsPlist ExportOptions.plist
+    
+    - name: Verify IPA
+      run: |
+        if [ -f "build/Export/TaskFlow.ipa" ]; then
+          echo "✅ IPA successfully created!"
+          ls -lh build/Export/TaskFlow.ipa
+          file build/Export/TaskFlow.ipa
+        else
+          echo "❌ IPA file not found!"
+          ls -la build/Export/
+          exit 1
+        fi
+    
+    - name: Upload IPA artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: TaskFlow-${{ github.run_number }}.ipa
+        path: build/Export/TaskFlow.ipa
+        retention-days: 30
+        if-no-files-found: error
+    
+    - name: Create GitHub Release with IPA
+      if: github.event_name == 'workflow_dispatch'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/Export/TaskFlow.ipa
+        tag_name: v${{ github.run_number }}
+        body: |
+          # TaskFlow iOS Build
+          Build #${{ github.run_number }}
+          
+          **Files included:**
+          - TaskFlow.ipa
+          
+          **Installation:**
+          1. Download TaskFlow.ipa
+          2. Use Xcode, Apple Configurator, or AltStore to install
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

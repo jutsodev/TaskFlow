@@ -1,0 +1,82 @@
+name: Build IPA
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Select Xcode version
+      run: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+    
+    - name: Get Xcode version
+      run: xcodebuild -version
+    
+    - name: Create ExportOptions.plist
+      run: |
+        cat > ExportOptions.plist <<'EOF'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>method</key>
+            <string>ad-hoc</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>thinning</key>
+            <string><none></string>
+        </dict>
+        </plist>
+        EOF
+    
+    - name: Build Archive
+      run: |
+        xcodebuild \
+          -project TaskFlow.xcodeproj \
+          -scheme TaskFlow \
+          -configuration Release \
+          -derivedDataPath build \
+          -archivePath build/TaskFlow.xcarchive \
+          -allowProvisioningUpdates \
+          archive
+    
+    - name: Export IPA
+      run: |
+        xcodebuild \
+          -exportArchive \
+          -archivePath build/TaskFlow.xcarchive \
+          -exportPath build/Export \
+          -exportOptionsPlist ExportOptions.plist \
+          -allowProvisioningUpdates
+    
+    - name: Upload IPA to artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: TaskFlow.ipa
+        path: build/Export/TaskFlow.ipa
+        retention-days: 30
+    
+    - name: Get IPA info
+      run: |
+        ls -lh build/Export/TaskFlow.ipa
+        echo "Build completed successfully!"
+        echo "IPA file size: $(du -h build/Export/TaskFlow.ipa | cut -f1)"
+
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/Export/TaskFlow.ipa
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
