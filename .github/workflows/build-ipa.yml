@@ -46,6 +46,7 @@ jobs:
           -project TaskFlow.xcodeproj \
           -scheme TaskFlow \
           -configuration Release \
+          -destination 'generic/platform=iOS' \
           -derivedDataPath build \
           -archivePath build/TaskFlow.xcarchive \
           -allowProvisioningUpdates \

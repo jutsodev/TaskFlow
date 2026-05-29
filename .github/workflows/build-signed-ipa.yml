@@ -40,6 +40,7 @@ jobs:
           -scheme TaskFlow \
           -configuration Release \
           -sdk iphoneos \
+          -destination 'generic/platform=iOS' \
           -derivedDataPath build \
           -archivePath build/TaskFlow.xcarchive \
           -verbose \
