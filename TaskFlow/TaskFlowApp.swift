@@ -18,15 +18,7 @@ struct TaskFlowApp: App {
             }
             .environmentObject(appState)
             .animation(.easeInOut(duration: 0.4), value: appState.hasCompletedOnboarding)
-            .preferredColorScheme(colorScheme)
-        }
-    }
-
-    private var colorScheme: ColorScheme? {
-        switch selectedAppearance {
-        case 1: return .light
-        case 2: return .dark
-        default: return nil
+            .preferredColorScheme(.dark)
         }
     }
 }

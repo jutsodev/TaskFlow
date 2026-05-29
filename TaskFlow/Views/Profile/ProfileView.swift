@@ -27,6 +27,7 @@ struct ProfileView: View {
                 }
             }
             .navigationTitle("Профиль")
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .sheet(isPresented: $showDeveloperModal) { DeveloperModalView() }
             .sheet(isPresented: $showEditProfile) {
                 EditProfileSheet().environmentObject(appState)
@@ -42,6 +43,7 @@ struct ProfileView: View {
             ZStack {
                 Circle()
                     .fill(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark)
                     .frame(width: 130, height: 130)
                     .scaleEffect(animateProfile ? 1 : 0.8)
 
@@ -53,7 +55,7 @@ struct ProfileView: View {
                     .stroke(
                         LinearGradient(
                             stops: [
-                                .init(color: Color.white.opacity(0.3), location: 0.0),
+                                .init(color: Color.white.opacity(0.4), location: 0.0),
                                 .init(color: Color.white.opacity(0.05), location: 1.0),
                             ],
                             startPoint: .topLeading,
@@ -67,13 +69,14 @@ struct ProfileView: View {
             VStack(spacing: 5) {
                 Text(appState.userName.isEmpty ? "Пользователь" : appState.userName)
                     .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
                     .opacity(animateProfile ? 1 : 0)
                     .offset(y: animateProfile ? 0 : 8)
 
                 if appState.userAge > 0 {
                     Text("\(appState.userAge) лет")
                         .font(.system(size: 15))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.4))
                 }
             }
 
@@ -87,8 +90,10 @@ struct ProfileView: View {
                         Text("Редактировать")
                             .font(.system(size: 14, weight: .medium))
                     }
+                    .foregroundStyle(.white)
                 }
                 .buttonStyle(.bordered)
+                .tint(.white.opacity(0.1))
                 .controlSize(.small)
 
                 if appState.streak > 0 {
@@ -98,6 +103,7 @@ struct ProfileView: View {
                         Text("\(appState.streak) дней")
                             .font(.system(size: 13, weight: .bold, design: .rounded))
                     }
+                    .foregroundStyle(.white)
                     .glassPillStyle(isSelected: true)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
@@ -112,6 +118,7 @@ struct ProfileView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Ваша статистика")
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white)
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 statCard("checkmark.circle.fill", "\(appState.totalCompleted)", "Выполнено")
@@ -128,12 +135,13 @@ struct ProfileView: View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.system(size: 18))
-                .foregroundStyle(.primary.opacity(0.7))
+                .foregroundStyle(.white.opacity(0.6))
             Text(value)
                 .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
             Text(label)
                 .font(.system(size: 10))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.4))
         }
         .glassStatCard()
     }
@@ -146,10 +154,11 @@ struct ProfileView: View {
             HStack {
                 Text("Достижения")
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
                 Spacer()
                 Text("\(unlocked)/\(achvs.count)")
                     .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.4))
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -159,16 +168,17 @@ struct ProfileView: View {
                             ZStack {
                                 Circle()
                                     .fill(.ultraThinMaterial)
+                                    .environment(\.colorScheme, .dark)
                                     .frame(width: 52, height: 52)
                                 Circle()
                                     .trim(from: 0, to: ach.progress)
-                                    .stroke(.primary.opacity(ach.isUnlocked ? 0.8 : 0.15),
+                                    .stroke(.white.opacity(ach.isUnlocked ? 0.7 : 0.1),
                                             style: StrokeStyle(lineWidth: 2, lineCap: .round))
                                     .frame(width: 52, height: 52)
                                     .rotationEffect(.degrees(-90))
                                 Image(systemName: ach.icon)
                                     .font(.system(size: 19))
-                                    .foregroundStyle(ach.isUnlocked ? .primary : .tertiary)
+                                    .foregroundStyle(ach.isUnlocked ? .white : .white.opacity(0.2))
                             }
                             .overlay(
                                 Circle()
@@ -178,7 +188,7 @@ struct ProfileView: View {
 
                             Text(ach.title)
                                 .font(.system(size: 10, weight: .medium))
-                                .foregroundStyle(ach.isUnlocked ? .primary : .tertiary)
+                                .foregroundStyle(ach.isUnlocked ? .white : .white.opacity(0.3))
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2)
                         }
@@ -194,6 +204,7 @@ struct ProfileView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Оформление")
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white)
 
             HStack(spacing: 10) {
                 themeButton(0, "sun.max", "Авто")
@@ -211,29 +222,30 @@ struct ProfileView: View {
             VStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.system(size: 20))
-                    .foregroundStyle(isSelected ? Color(.systemBackground) : .primary)
+                    .foregroundStyle(isSelected ? Color(red: 0.1, green: 0.06, blue: 0.18) : .white)
                     .frame(width: 44, height: 44)
                     .background(
-                        isSelected ? AnyShapeStyle(Color.primary) : AnyShapeStyle(.ultraThinMaterial),
+                        isSelected ? AnyShapeStyle(Color.white.opacity(0.8)) : AnyShapeStyle(.ultraThinMaterial),
                         in: Circle()
                     )
+                    .environment(\.colorScheme, .dark)
                     .overlay(Circle().stroke(Color.white.opacity(isSelected ? 0 : 0.15), lineWidth: 0.5))
 
                 Text(label)
                     .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
-                    .foregroundStyle(isSelected ? .primary : .secondary)
+                    .foregroundStyle(isSelected ? .white : .white.opacity(0.5))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
             .background(
                 isSelected
-                ? AnyShapeStyle(Color.primary.opacity(0.04))
+                ? AnyShapeStyle(Color.white.opacity(0.06))
                 : AnyShapeStyle(Color.clear),
                 in: RoundedRectangle(cornerRadius: 16, style: .continuous)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(isSelected ? Color.primary.opacity(0.15) : Color.white.opacity(0.1), lineWidth: 0.5)
+                    .stroke(isSelected ? Color.white.opacity(0.2) : Color.white.opacity(0.05), lineWidth: 0.5)
             )
         }
     }
@@ -243,25 +255,25 @@ struct ProfileView: View {
             NavigationLink {
                 StatisticsView().environmentObject(appState)
             } label: {
-                menuRowLabel("chart.bar.fill", "Статистика", .secondary)
+                menuRowLabel("chart.bar.fill", "Статистика")
             }
-            Divider().padding(.leading, 50)
+            Divider().padding(.leading, 50).background(.white.opacity(0.08))
             NavigationLink {
                 SearchView().environmentObject(appState)
             } label: {
-                menuRowLabel("magnifyingglass", "Поиск", .secondary)
+                menuRowLabel("magnifyingglass", "Поиск")
             }
-            Divider().padding(.leading, 50)
-            menuRow("questionmark.circle", "Показать подсказки", .secondary) {
+            Divider().padding(.leading, 50).background(.white.opacity(0.08))
+            menuRow("questionmark.circle", "Показать подсказки") {
                 appState.hasCompletedOnboarding = false
             }
-            Divider().padding(.leading, 50)
-            menuRow("square.and.arrow.up", "Экспорт данных", .secondary) {
+            Divider().padding(.leading, 50).background(.white.opacity(0.08))
+            menuRow("square.and.arrow.up", "Экспорт данных") {
                 let text = appState.exportData(format: .json)
                 UIPasteboard.general.string = text
             }
-            Divider().padding(.leading, 50)
-            menuRow("trash", "Сбросить всё", .red) {
+            Divider().padding(.leading, 50).background(.white.opacity(0.08))
+            menuRow("trash", "Сбросить всё", isDestructive: true) {
                 appState.tasks.removeAll()
                 appState.goals.removeAll()
                 appState.habits.removeAll()
@@ -270,33 +282,34 @@ struct ProfileView: View {
         .cardStyle()
     }
 
-    private func menuRow(_ icon: String, _ title: String, _ color: Color, action: @escaping () -> Void) -> some View {
+    private func menuRow(_ icon: String, _ title: String, isDestructive: Bool = false, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            menuRowLabel(icon, title, color)
+            menuRowLabel(icon, title, isDestructive: isDestructive)
         }
     }
 
-    private func menuRowLabel(_ icon: String, _ title: String, _ color: Color) -> some View {
+    private func menuRowLabel(_ icon: String, _ title: String, isDestructive: Bool = false) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 15))
-                .foregroundStyle(color)
+                .foregroundStyle(isDestructive ? .red : .white.opacity(0.6))
                 .frame(width: 30, height: 30)
                 .background(
                     ZStack {
                         RoundedRectangle(cornerRadius: 8, style: .continuous)
                             .fill(.ultraThinMaterial)
+                            .environment(\.colorScheme, .dark)
                         RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
                     }
                 )
             Text(title)
                 .font(.system(size: 15))
-                .foregroundStyle(color == .red ? .red : .primary)
+                .foregroundStyle(isDestructive ? .red : .white)
             Spacer()
             Image(systemName: "chevron.right")
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(.white.opacity(0.2))
         }
         .padding(.vertical, 8)
     }
@@ -305,6 +318,7 @@ struct ProfileView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Разработчик")
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white)
 
             VStack(spacing: 14) {
                 HStack(spacing: 14) {
@@ -313,62 +327,63 @@ struct ProfileView: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("TaskFlow")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
                         Text("by jutsodev")
                             .font(.system(size: 14))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.white.opacity(0.4))
                     }
                     Spacer()
                     Text("v2.0")
                         .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(.white)
                         .glassPillStyle(isSelected: true)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
                 }
 
-                Divider()
+                Divider().background(.white.opacity(0.08))
 
-                // Telegram with proper logo
                 socialLink("paperplane.fill", "Telegram", "@slehes", "https://t.me/slehes", accentColor: Color(red: 0.24, green: 0.56, blue: 0.93))
-                // GitHub with proper logo
-                socialLink("chevron.left.forwardslash.chevron.right", "GitHub", "jutsodev", "https://github.com/jutsodev", accentColor: .primary)
-                // Telegram Channel with proper logo
+                socialLink("chevron.left.forwardslash.chevron.right", "GitHub", "jutsodev", "https://github.com/jutsodev", accentColor: .white)
                 socialLink("megaphone.fill", "Канал Telegram", "@slehesQ", "https://t.me/slehesQ", accentColor: Color(red: 0.24, green: 0.56, blue: 0.93))
 
-                Divider()
+                Divider().background(.white.opacity(0.08))
 
                 Button { showDeveloperModal = true } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "hammer.fill")
                             .font(.system(size: 16))
+                            .foregroundStyle(.white)
                             .frame(width: 34, height: 34)
                             .background(
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                                         .fill(.ultraThinMaterial)
+                                        .environment(\.colorScheme, .dark)
                                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                        .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                                        .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
                                 }
                             )
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Заказать разработку")
                                 .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(.white)
                             Text("Приложения, сайты, боты")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.white.opacity(0.4))
                         }
                         Spacer()
                         Image(systemName: "arrow.up.right")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(.tertiary)
+                            .foregroundStyle(.white.opacity(0.2))
                     }
-                    .foregroundStyle(.primary)
                 }
             }
             .cardStyle()
         }
     }
 
-    private func socialLink(_ icon: String, _ title: String, _ subtitle: String, _ url: String, accentColor: Color = .primary) -> some View {
+    private func socialLink(_ icon: String, _ title: String, _ subtitle: String, _ url: String, accentColor: Color = .white) -> some View {
         Button {
             if let link = URL(string: url) { UIApplication.shared.open(link) }
         } label: {
@@ -380,7 +395,7 @@ struct ProfileView: View {
                     .background(
                         ZStack {
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .fill(accentColor)
+                                .fill(accentColor.opacity(0.3))
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
                                 .fill(
                                     LinearGradient(
@@ -392,18 +407,19 @@ struct ProfileView: View {
                                         endPoint: .bottomTrailing
                                     )
                                 )
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
                         }
                     )
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(title).font(.system(size: 14, weight: .medium))
-                    Text(subtitle).font(.caption).foregroundStyle(.secondary)
+                    Text(title).font(.system(size: 14, weight: .medium)).foregroundStyle(.white)
+                    Text(subtitle).font(.caption).foregroundStyle(.white.opacity(0.4))
                 }
                 Spacer()
                 Image(systemName: "arrow.up.right")
                     .font(.system(size: 10))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.white.opacity(0.2))
             }
-            .foregroundStyle(.primary)
         }
     }
 }

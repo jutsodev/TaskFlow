@@ -49,12 +49,13 @@ struct HomeView: View {
                     .padding(.bottom, 100)
                 }
             }
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showCreateTask = true } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 22))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(.white)
                     }
                 }
             }
@@ -80,9 +81,10 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(greeting)
                         .font(.system(size: 14))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.5))
                     Text(appState.userName.isEmpty ? "Пользователь" : appState.userName)
                         .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
                 }
                 .opacity(animateHeader ? 1 : 0)
                 .offset(x: animateHeader ? 0 : -10)
@@ -101,7 +103,7 @@ struct HomeView: View {
                 let _ = { fmtDate.locale = Locale(identifier: "ru_RU"); fmtDate.dateFormat = "EEEE, d MMMM" }()
                 Text(fmtDate.string(from: Date()).capitalized)
                     .font(.system(size: 13))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.white.opacity(0.3))
                 Spacer()
                 if appState.streak > 0 {
                     HStack(spacing: 4) {
@@ -110,7 +112,7 @@ struct HomeView: View {
                         Text("\(appState.streak) дн.")
                             .font(.system(size: 12, weight: .bold, design: .rounded))
                     }
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(.white)
                     .glassPillStyle(isSelected: true)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
@@ -134,14 +136,15 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(total > 0 ? "Выполнено сегодня" : "Нет задач на сегодня")
                         .font(.system(size: 13))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.5))
                     if total > 0 {
                         HStack(alignment: .firstTextBaseline, spacing: 4) {
                             Text("\(done)")
                                 .font(.system(size: 30, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
                             Text("из \(total)")
                                 .font(.system(size: 16))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.white.opacity(0.4))
                         }
                     }
                 }
@@ -153,9 +156,10 @@ struct HomeView: View {
                                 .fill(Color.white.opacity(0.08))
                                 .frame(height: 5)
                             Capsule()
-                                .fill(.primary)
+                                .fill(Color.white.opacity(0.7))
                                 .frame(width: max(geo.size.width * progress, 4), height: 5)
                                 .animation(.spring(response: 0.8), value: progress)
+                                .shadow(color: .white.opacity(0.3), radius: 2)
                         }
                     }
                     .frame(height: 5)
@@ -173,19 +177,19 @@ struct HomeView: View {
             HStack(spacing: 6) {
                 Image(systemName: "quote.opening")
                     .font(.system(size: 10))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.white.opacity(0.2))
                 Text("Мотивация дня")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.white.opacity(0.3))
             }
             Text(quote.text)
                 .font(.system(size: 14, weight: .medium, design: .serif))
                 .lineSpacing(5)
-                .foregroundStyle(.primary.opacity(0.85))
+                .foregroundStyle(.white.opacity(0.8))
             if !quote.author.isEmpty {
                 Text("— \(quote.author)")
                     .font(.system(size: 12, design: .serif))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.white.opacity(0.3))
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
@@ -197,11 +201,12 @@ struct HomeView: View {
             HStack {
                 Text("Сегодня")
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
                 Spacer()
                 if !appState.todayTasks.isEmpty {
                     Text("\(appState.completedTodayCount)/\(appState.todayTasks.count)")
                         .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.4))
                 }
             }
 
@@ -211,12 +216,14 @@ struct HomeView: View {
                     VStack(spacing: 10) {
                         Image(systemName: "checkmark.seal.fill")
                             .font(.system(size: 28))
-                            .foregroundStyle(.tertiary)
+                            .foregroundStyle(.white.opacity(0.2))
                         Text("Задач на сегодня нет")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.white.opacity(0.5))
                         Button("Создать") { showCreateTask = true }
                             .buttonStyle(.bordered)
+                            .tint(.white.opacity(0.1))
+                            .foregroundStyle(.white)
                             .controlSize(.small)
                     }
                     .padding(.vertical, 20)
@@ -233,15 +240,15 @@ struct HomeView: View {
                         } label: {
                             Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                                 .font(.system(size: 22))
-                                .foregroundStyle(task.isCompleted ? .secondary : .primary)
+                                .foregroundStyle(task.isCompleted ? .white.opacity(0.3) : .white)
                                 .contentTransition(.symbolEffect(.replace))
                         }
 
                         VStack(alignment: .leading, spacing: 3) {
                             Text(task.title)
                                 .font(.system(size: 15, weight: .medium))
-                                .strikethrough(task.isCompleted, color: .secondary)
-                                .foregroundStyle(task.isCompleted ? .secondary : .primary)
+                                .strikethrough(task.isCompleted, color: .white.opacity(0.3))
+                                .foregroundStyle(task.isCompleted ? .white.opacity(0.4) : .white)
 
                             HStack(spacing: 6) {
                                 Image(systemName: task.category.icon)
@@ -254,7 +261,7 @@ struct HomeView: View {
                                         .font(.system(size: 11, weight: .medium, design: .rounded))
                                 }
                             }
-                            .foregroundStyle(.tertiary)
+                            .foregroundStyle(.white.opacity(0.3))
                         }
 
                         Spacer()
@@ -270,7 +277,7 @@ struct HomeView: View {
                 if appState.todayTasks.count > 5 {
                     Text("+ ещё \(appState.todayTasks.count - 5)")
                         .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(.white.opacity(0.3))
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
@@ -284,10 +291,11 @@ struct HomeView: View {
                     HStack {
                         Text("Привычки")
                             .font(.system(size: 18, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white)
                         Spacer()
                         Text("\(appState.habitsCompletedToday)/\(appState.habits.count)")
                             .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.white.opacity(0.4))
                     }
 
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -302,7 +310,8 @@ struct HomeView: View {
                                     VStack(spacing: 8) {
                                         ZStack {
                                             Circle()
-                                                .fill(done ? AnyShapeStyle(.primary) : AnyShapeStyle(.ultraThinMaterial))
+                                                .fill(done ? AnyShapeStyle(Color.white.opacity(0.7)) : AnyShapeStyle(.ultraThinMaterial))
+                                                .environment(\.colorScheme, .dark)
                                                 .frame(width: 48, height: 48)
                                             if !done {
                                                 Circle()
@@ -311,12 +320,12 @@ struct HomeView: View {
                                             }
                                             Image(systemName: done ? "checkmark" : habit.icon)
                                                 .font(.system(size: done ? 18 : 20, weight: done ? .bold : .regular))
-                                                .foregroundStyle(done ? Color(.systemBackground) : .primary)
+                                                .foregroundStyle(done ? Color(red: 0.1, green: 0.06, blue: 0.18) : .white)
                                                 .contentTransition(.symbolEffect(.replace))
                                         }
                                         Text(habit.title)
                                             .font(.system(size: 10, weight: .medium))
-                                            .foregroundStyle(done ? .primary : .secondary)
+                                            .foregroundStyle(done ? .white : .white.opacity(0.5))
                                             .lineLimit(1)
                                         HStack(spacing: 2) {
                                             Image(systemName: "flame.fill")
@@ -324,7 +333,7 @@ struct HomeView: View {
                                             Text("\(habit.currentStreak)")
                                                 .font(.system(size: 9, weight: .bold, design: .rounded))
                                         }
-                                        .foregroundStyle(.tertiary)
+                                        .foregroundStyle(.white.opacity(0.3))
                                     }
                                     .frame(width: 72)
                                 }
@@ -342,16 +351,19 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Цели")
                         .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
 
                     ForEach(appState.goals.prefix(3)) { goal in
                         HStack(spacing: 14) {
                             Image(systemName: goal.category.icon)
                                 .font(.system(size: 16))
+                                .foregroundStyle(.white)
                                 .frame(width: 34, height: 34)
                                 .background(
                                     ZStack {
                                         Circle()
                                             .fill(.ultraThinMaterial)
+                                            .environment(\.colorScheme, .dark)
                                         Circle()
                                             .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
                                     }
@@ -360,14 +372,15 @@ struct HomeView: View {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(goal.title)
                                     .font(.system(size: 14, weight: .medium))
+                                    .foregroundStyle(.white)
                                     .lineLimit(1)
                                 ProgressView(value: goal.progress)
-                                    .tint(.primary)
+                                    .tint(.white)
                             }
 
                             Text("\(Int(goal.progress * 100))%")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.white.opacity(0.5))
                                 .frame(width: 40, alignment: .trailing)
                         }
                         .cardStyle()
@@ -382,10 +395,12 @@ struct HomeView: View {
             HStack {
                 Text("Активность за неделю")
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
                 Spacer()
                 Button { showWeeklyReview = true } label: {
                     Text("Обзор")
                         .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.6))
                 }
             }
             WeekBarChart(data: weeklyTaskData(from: appState))

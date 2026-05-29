@@ -5,26 +5,119 @@ struct ContentView: View {
     @State private var selectedTab = 0
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            HomeView()
-                .tabItem {
-                    Label("Главная", systemImage: "house.fill")
-                }
-                .tag(0)
+        ZStack {
+            // Colorful ambient background (so glass is visible!)
+            AmbientBackground()
 
-            TasksTabView()
-                .tabItem {
-                    Label("Задачи", systemImage: "checklist")
+            VStack(spacing: 0) {
+                // Main content
+                Group {
+                    switch selectedTab {
+                    case 0: HomeView()
+                    case 1: TasksTabView()
+                    case 2: ProfileView()
+                    default: HomeView()
+                    }
                 }
-                .tag(1)
 
-            ProfileView()
-                .tabItem {
-                    Label("Профиль", systemImage: "person.crop.circle.fill")
-                }
-                .tag(2)
+                // Custom Glass Tab Bar
+                GlassTabBar(selectedTab: $selectedTab)
+            }
         }
-        .tint(.primary)
+    }
+}
+
+// MARK: - Custom Glass Tab Bar
+struct GlassTabBar: View {
+    @Binding var selectedTab: Int
+
+    var body: some View {
+        HStack(spacing: 0) {
+            tabItem(icon: "house.fill", title: "Главная", tag: 0)
+            tabItem(icon: "checklist", title: "Задачи", tag: 1)
+            tabItem(icon: "person.crop.circle.fill", title: "Профиль", tag: 2)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 10)
+        .padding(.bottom, 24)
+        .background(
+            ZStack {
+                // Thick glass for tab bar
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark)
+
+                // Top highlight
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            stops: [
+                                .init(color: Color.white.opacity(0.12), location: 0.0),
+                                .init(color: Color.clear, location: 0.3),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+
+                // Top border (the "liquid" edge)
+                VStack {
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color.white.opacity(0.35), location: 0.0),
+                            .init(color: Color.white.opacity(0.08), location: 1.0),
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                    .frame(height: 0.5)
+                    Spacer()
+                }
+
+                // Specular highlight streak
+                LinearGradient(
+                    stops: [
+                        .init(color: Color.clear, location: 0.0),
+                        .init(color: Color.white.opacity(0.15), location: 0.2),
+                        .init(color: Color.white.opacity(0.03), location: 0.4),
+                        .init(color: Color.clear, location: 0.6),
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            }
+        )
+        .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: -3)
+    }
+
+    private func tabItem(icon: String, title: String, tag: Int) -> some View {
+        let isSelected = selectedTab == tag
+        return Button {
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
+                selectedTab = tag
+            }
+        } label: {
+            VStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 22, weight: isSelected ? .semibold : .regular))
+                    .symbolEffect(.bounce, value: selectedTab)
+
+                Text(title)
+                    .font(.system(size: 11, weight: isSelected ? .semibold : .medium))
+            }
+            .foregroundStyle(isSelected ? .white : .white.opacity(0.4))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+            .background(
+                Group {
+                    if isSelected {
+                        Capsule()
+                            .fill(Color.white.opacity(0.1))
+                    }
+                }
+            )
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -46,7 +139,6 @@ struct TasksTabView: View {
                 .pickerStyle(.segmented)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
-                .glassBackground()
 
                 // Content
                 Group {
@@ -63,11 +155,13 @@ struct TasksTabView: View {
                 }
             }
             .navigationTitle("Задачи")
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showCreateTask = true } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 22))
+                            .foregroundStyle(.white)
                     }
                 }
             }
@@ -78,7 +172,7 @@ struct TasksTabView: View {
     }
 }
 
-// MARK: - Tasks List Content (extracted from TasksView for embedding)
+// MARK: - Tasks List Content
 struct TasksViewContent: View {
     @EnvironmentObject var appState: AppState
     @State private var selectedCategory: TaskCategory? = nil
@@ -146,12 +240,12 @@ struct TasksViewContent: View {
                             Text(sortMode.rawValue)
                                 .font(.system(size: 13, weight: .medium))
                         }
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.5))
                     }
                     Spacer()
                     Text("\(filtered.count) задач")
                         .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(.white.opacity(0.3))
                 }
                 .padding(.horizontal, 16)
 
@@ -159,12 +253,13 @@ struct TasksViewContent: View {
                     VStack(spacing: 14) {
                         Image(systemName: "doc.text.magnifyingglass")
                             .font(.system(size: 36))
-                            .foregroundStyle(.tertiary)
+                            .foregroundStyle(.white.opacity(0.2))
                         Text("Задачи не найдены")
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white)
                         Text("Измените фильтры или создайте новую задачу")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.white.opacity(0.4))
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
@@ -192,7 +287,7 @@ struct TasksViewContent: View {
             } label: {
                 Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 22))
-                    .foregroundStyle(task.isCompleted ? .secondary : .primary)
+                    .foregroundStyle(task.isCompleted ? .white.opacity(0.3) : .white)
             }
             .buttonStyle(.plain)
 
@@ -200,7 +295,7 @@ struct TasksViewContent: View {
                 Text(task.title)
                     .font(.system(size: 15, weight: .medium))
                     .strikethrough(task.isCompleted)
-                    .foregroundStyle(task.isCompleted ? .secondary : .primary)
+                    .foregroundStyle(task.isCompleted ? .white.opacity(0.4) : .white)
 
                 HStack(spacing: 8) {
                     Label(task.category.rawValue, systemImage: task.category.icon)
@@ -212,7 +307,7 @@ struct TasksViewContent: View {
                     }
                 }
                 .font(.caption2)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.4))
             }
 
             Spacer()
@@ -223,7 +318,7 @@ struct TasksViewContent: View {
                     .foregroundStyle(task.priority.color)
                 Text(shortRuDate(task.startDate))
                     .font(.system(size: 10))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.white.opacity(0.3))
             }
         }
         .padding(14)
