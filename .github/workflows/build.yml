@@ -57,3 +57,38 @@ jobs:
           name: TaskFlow-Archive
           path: ${{ runner.temp }}/TaskFlow.xcarchive
           retention-days: 7
+
+      - name: Export IPA (may require signing assets)
+        run: |
+          cat > $RUNNER_TEMP/exportOptions.plist <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>ad-hoc</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>compileBitcode</key>
+            <false/>
+            <key>uploadSymbols</key>
+            <false/>
+          </dict>
+          </plist>
+          PLIST
+
+          mkdir -p $RUNNER_TEMP/TaskFlowExport
+
+          xcodebuild -exportArchive \
+            -archivePath $RUNNER_TEMP/TaskFlow.xcarchive \
+            -exportPath $RUNNER_TEMP/TaskFlowExport \
+            -exportOptionsPlist $RUNNER_TEMP/exportOptions.plist \
+            | xcpretty || true
+
+      - name: Upload IPA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TaskFlow-IPA
+          path: ${{ runner.temp }}/TaskFlowExport/*.ipa
+          retention-days: 7
