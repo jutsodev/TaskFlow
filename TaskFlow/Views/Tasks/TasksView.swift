@@ -29,13 +29,13 @@ struct TasksView: View {
         switch sortMode {
         case .dateDesc: result.sort { $0.startDate > $1.startDate }
         case .dateAsc: result.sort { $0.startDate < $1.startDate }
-        case .priorityHigh: result.sort { priorityWeight($0.priority) > priorityWeight($1.priority) }
+        case .priorityHigh: result.sort { Self.priorityWeightStatic($0.priority) > Self.priorityWeightStatic($1.priority) }
         case .category: result.sort { $0.category.rawValue < $1.category.rawValue }
         }
         return result
     }
 
-    private func priorityWeight(_ p: Priority) -> Int {
+    static func priorityWeightStatic(_ p: Priority) -> Int {
         switch p { case .high: return 3; case .medium: return 2; case .low: return 1 }
     }
 
@@ -189,9 +189,7 @@ struct TasksView: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(selected ? Color.primary : Color.clear, in: Capsule())
-            .foregroundStyle(selected ? Color(.systemBackground) : .primary)
-            .overlay(Capsule().stroke(.separator, lineWidth: selected ? 0 : 1))
+            .glassPillStyle(isSelected: selected)
         }
     }
 }

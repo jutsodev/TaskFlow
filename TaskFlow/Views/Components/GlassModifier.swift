@@ -1,25 +1,183 @@
 import SwiftUI
 
+// MARK: - iOS 26 Liquid Glass Effect System
+
 extension View {
-    func cardStyle() -> some View {
+    /// iOS 26-style liquid glass card with blur, transparency, and specular highlights
+    func glassCardStyle() -> some View {
         self
             .padding(16)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+            .background(
+                ZStack {
+                    // Base frosted glass layer
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                    // Specular highlight gradient (top edge light reflection)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: Color.white.opacity(0.18), location: 0.0),
+                                    .init(color: Color.white.opacity(0.04), location: 0.3),
+                                    .init(color: Color.clear, location: 0.5),
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    // Subtle border
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .stroke(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: Color.white.opacity(0.3), location: 0.0),
+                                    .init(color: Color.white.opacity(0.05), location: 0.5),
+                                    .init(color: Color.white.opacity(0.15), location: 1.0),
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.5
+                        )
+                }
+            )
+            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
+            .shadow(color: .black.opacity(0.03), radius: 2, x: 0, y: 1)
     }
 
-    func pillStyle() -> some View {
+    /// iOS 26 legacy card style (replaces old cardStyle)
+    func cardStyle() -> some View {
+        self.glassCardStyle()
+    }
+
+    /// iOS 26-style liquid glass pill/chip with selection state
+    func glassPillStyle(isSelected: Bool = false) -> some View {
         self
-            .padding(.horizontal, 10)
-            .padding(.vertical, 4)
-            .background(.secondary.opacity(0.08), in: Capsule())
+            .background(
+                ZStack {
+                    if isSelected {
+                        Capsule()
+                            .fill(.ultraThinMaterial)
+                        Capsule()
+                            .fill(
+                                LinearGradient(
+                                    stops: [
+                                        .init(color: Color.primary.opacity(0.12), location: 0.0),
+                                        .init(color: Color.primary.opacity(0.06), location: 1.0),
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                        Capsule()
+                            .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                    } else {
+                        Capsule()
+                            .fill(.ultraThinMaterial)
+                        Capsule()
+                            .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                    }
+                }
+            )
+            .foregroundStyle(isSelected ? .primary : .secondary)
     }
 
+    /// Legacy pill style (backward compatible)
+    func pillStyle() -> some View {
+        self.glassPillStyle()
+    }
+
+    /// iOS 26-style input field with glass effect
     func inputStyle() -> some View {
         self
+            .padding(14)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                }
+            )
+    }
+
+    /// Glass background for navigation/tab bars
+    func glassBackground() -> some View {
+        self
+            .background(
+                ZStack {
+                    Rectangle()
+                        .fill(.bar)
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: Color.white.opacity(0.08), location: 0.0),
+                                    .init(color: Color.clear, location: 0.4),
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                }
+            )
+    }
+
+    /// iOS 26 floating action button with glass effect
+    func glassFloatingStyle() -> some View {
+        self
             .padding(12)
-            .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 10))
+            .background(
+                ZStack {
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                stops: [
+                                    .init(color: Color.primary.opacity(0.1), location: 0.0),
+                                    .init(color: Color.primary.opacity(0.04), location: 1.0),
+                                ],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: 30
+                            )
+                        )
+                    Circle()
+                        .stroke(Color.white.opacity(0.25), lineWidth: 0.5)
+                }
+            )
+            .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+    }
+
+    /// iOS 26-style stat card with glass
+    func glassStatCard() -> some View {
+        self
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: Color.white.opacity(0.12), location: 0.0),
+                                    .init(color: Color.clear, location: 0.4),
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                }
+            )
     }
 }
+
+// MARK: - Shared UI Components
 
 struct LogoView: View {
     var size: CGFloat = 40
@@ -30,6 +188,11 @@ struct LogoView: View {
             .aspectRatio(contentMode: .fit)
             .frame(width: size, height: size)
             .clipShape(RoundedRectangle(cornerRadius: size * 0.22))
+            .overlay(
+                RoundedRectangle(cornerRadius: size * 0.22)
+                    .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+            )
+            .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
     }
 }
 
@@ -46,7 +209,7 @@ struct AvatarView: View {
                     .aspectRatio(contentMode: .fill)
             } else {
                 ZStack {
-                    Color(.secondarySystemBackground)
+                    Color.clear
                     Text(initials.isEmpty ? "?" : initials)
                         .font(.system(size: size * 0.36, weight: .bold, design: .rounded))
                         .foregroundStyle(.secondary)
@@ -54,8 +217,19 @@ struct AvatarView: View {
             }
         }
         .frame(width: size, height: size)
+        .background(
+            ZStack {
+                Circle()
+                    .fill(.ultraThinMaterial)
+                Circle()
+                    .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+            }
+        )
         .clipShape(Circle())
-        .overlay(Circle().stroke(.separator, lineWidth: 0.5))
+        .overlay(
+            Circle()
+                .stroke(Color.white.opacity(0.25), lineWidth: 0.5)
+        )
     }
 }
 
@@ -67,7 +241,7 @@ struct ProgressRing: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(.separator, lineWidth: lineWidth)
+                .stroke(Color.white.opacity(0.1), lineWidth: lineWidth)
             Circle()
                 .trim(from: 0, to: min(progress, 1.0))
                 .stroke(.primary, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
@@ -125,8 +299,8 @@ struct WeekBarChart: View {
                     Text("\(item.value)")
                         .font(.system(size: 10, weight: .bold, design: .rounded))
                         .foregroundStyle(item.value > 0 ? .primary : .tertiary)
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(item.value > 0 ? Color.primary : Color(UIColor.separator).opacity(0.3))
+                    RoundedRectangle(cornerRadius: 5, style: .continuous)
+                        .fill(item.value > 0 ? AnyShapeStyle(.primary) : AnyShapeStyle(Color.white.opacity(0.08)))
                         .frame(height: max(height * 60, 4))
                     Text(item.label)
                         .font(.system(size: 9, weight: .medium))
@@ -159,15 +333,13 @@ struct StreakCalendarView: View {
                 let key = fmt.string(from: date)
                 let done = completedDates.contains(key)
 
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(done ? Color.primary : Color.secondary.opacity(0.08))
+                RoundedRectangle(cornerRadius: 2, style: .continuous)
+                    .fill(done ? AnyShapeStyle(.primary) : AnyShapeStyle(Color.white.opacity(0.06)))
                     .frame(height: 12)
             }
         }
     }
 }
-
-// TaskDetailSheet and GoalDetailSheet are defined in their respective view files
 
 func formattedRuDate(_ date: Date) -> String {
     let fmt = DateFormatter()

@@ -111,7 +111,9 @@ struct HomeView: View {
                             .font(.system(size: 12, weight: .bold, design: .rounded))
                     }
                     .foregroundStyle(.primary)
-                    .pillStyle()
+                    .glassPillStyle(isSelected: true)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
                 }
             }
             .padding(.horizontal, 20)
@@ -148,7 +150,7 @@ struct HomeView: View {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Capsule()
-                                .fill(Color(UIColor.separator))
+                                .fill(Color.white.opacity(0.08))
                                 .frame(height: 5)
                             Capsule()
                                 .fill(.primary)
@@ -300,11 +302,13 @@ struct HomeView: View {
                                     VStack(spacing: 8) {
                                         ZStack {
                                             Circle()
-                                                .fill(done ? Color.primary : Color.clear)
+                                                .fill(done ? AnyShapeStyle(.primary) : AnyShapeStyle(.ultraThinMaterial))
                                                 .frame(width: 48, height: 48)
-                                            Circle()
-                                                .stroke(done ? Color.clear : Color(UIColor.separator), lineWidth: 1.5)
-                                                .frame(width: 48, height: 48)
+                                            if !done {
+                                                Circle()
+                                                    .stroke(Color.white.opacity(0.15), lineWidth: 1.5)
+                                                    .frame(width: 48, height: 48)
+                                            }
                                             Image(systemName: done ? "checkmark" : habit.icon)
                                                 .font(.system(size: done ? 18 : 20, weight: done ? .bold : .regular))
                                                 .foregroundStyle(done ? Color(.systemBackground) : .primary)
@@ -344,7 +348,14 @@ struct HomeView: View {
                             Image(systemName: goal.category.icon)
                                 .font(.system(size: 16))
                                 .frame(width: 34, height: 34)
-                                .background(.secondary.opacity(0.08), in: Circle())
+                                .background(
+                                    ZStack {
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                        Circle()
+                                            .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                                    }
+                                )
 
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(goal.title)
