@@ -432,7 +432,8 @@ struct CreateGoalView: View {
     }
 
     private var goalMilestonesList: some View {
-        ForEach(milestones.indices, id: \.self) { index in
+        let indices = Array(milestones.indices)
+        return ForEach(indices, id: \.self) { index in
             HStack(spacing: 10) {
                 Text("\(index + 1)")
                     .font(.system(size: 13, weight: .bold, design: .rounded))

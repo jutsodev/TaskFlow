@@ -124,7 +124,4 @@ class AppState: ObservableObject {
     private func loadHabits() { if let d = UserDefaults.standard.data(forKey: "habits"), let v = try? JSONDecoder().decode([HabitItem].self, from: d) { habits = v } }
 }
 
-func formatTimeHMS(_ totalSeconds: Int) -> String {
-    let h = totalSeconds / 3600, m = (totalSeconds % 3600) / 60, s = totalSeconds % 60
-    return h > 0 ? String(format: "%d:%02d:%02d", h, m, s) : String(format: "%02d:%02d", m, s)
-}
+

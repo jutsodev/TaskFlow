@@ -368,7 +368,8 @@ struct CreateJournalEntryView: View {
     }
 
     private var highlightsList: some View {
-        ForEach(highlights.indices, id: \.self) { i in
+        let indices = Array(highlights.indices)
+        return ForEach(indices, id: \.self) { i in
             HStack(spacing: 10) {
                 Text("\(i + 1)")
                     .font(.system(size: 12, weight: .bold, design: .rounded))
