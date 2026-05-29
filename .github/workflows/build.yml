@@ -18,29 +18,31 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      - name: Build Archive
+      - name: Build
         run: |
-          xcodebuild archive \
+          xcodebuild build \
             -project TaskFlow.xcodeproj \
             -scheme TaskFlow \
-            -destination 'generic/platform=iOS' \
+            -sdk iphoneos \
             -configuration Release \
-            -archivePath build/TaskFlow.xcarchive \
+            -derivedDataPath build \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             ENABLE_USER_SCRIPT_SANDBOXING=NO \
-            SKIP_INSTALL=NO
+            SWIFT_OPTIMIZATION_LEVEL=-Onone
 
-      - name: Export IPA
+      - name: Create IPA
         run: |
-          mkdir -p build/Payload
-          cp -R build/TaskFlow.xcarchive/Products/Applications/TaskFlow.app build/Payload/
-          cd build && zip -r TaskFlow.ipa Payload
+          APP_PATH=$(find build/Build/Products/Release-iphoneos -name "TaskFlow.app" -type d | head -1)
+          echo "Found app at: $APP_PATH"
+          mkdir -p Payload
+          cp -R "$APP_PATH" Payload/
+          zip -r TaskFlow.ipa Payload
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: TaskFlow.ipa
-          path: build/TaskFlow.ipa
+          path: TaskFlow.ipa
           retention-days: 30
