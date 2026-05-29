@@ -1,131 +1,45 @@
-name: Build TaskFlow
+name: Build IPA
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build iOS App
     runs-on: macos-15
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
 
-      - name: Show Xcode version
-        run: xcodebuild -version
-
-      - name: Resolve dependencies
-        run: xcodebuild -resolvePackageDependencies -project TaskFlow.xcodeproj -scheme TaskFlow
-
-      - name: Build for iOS Simulator
-        run: |
-          xcodebuild build \
-            -project TaskFlow.xcodeproj \
-            -scheme TaskFlow \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
-            -configuration Debug \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            | xcpretty || true
-
-      - name: Build for Release (Archive)
+      - name: Build Archive
         run: |
           xcodebuild archive \
             -project TaskFlow.xcodeproj \
             -scheme TaskFlow \
-            -archivePath $RUNNER_TEMP/TaskFlow.xcarchive \
-            -destination 'generic/platform=iOS' \
+            -sdk iphoneos \
             -configuration Release \
+            -archivePath build/TaskFlow.xcarchive \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            SKIP_INSTALL=NO \
-            | xcpretty || true
+            ENABLE_USER_SCRIPT_SANDBOXING=NO
 
-      - name: Debug: list RUNNER_TEMP (post-archive)
+      - name: Export IPA
         run: |
-          echo "RUNNER_TEMP=$RUNNER_TEMP"
-          ls -la "$RUNNER_TEMP" || true
-          find "$RUNNER_TEMP" -maxdepth 3 -type f -print || true
-
-      - name: Zip xcarchive for upload (if exists)
-        run: |
-          if [ -d "$RUNNER_TEMP/TaskFlow.xcarchive" ]; then
-            cd "$RUNNER_TEMP"
-            if [ -f TaskFlow.xcarchive.zip ]; then rm TaskFlow.xcarchive.zip || true; fi
-            zip -r TaskFlow.xcarchive.zip TaskFlow.xcarchive || true
-            echo "ZIPPED"
-          else
-            echo "No xcarchive directory found"
-          fi
-
-      - name: Upload Archive
-        uses: actions/upload-artifact@v4
-        with:
-          name: TaskFlow-Archive
-          path: |
-            ${{ runner.temp }}/TaskFlow.xcarchive
-            ${{ runner.temp }}/TaskFlow.xcarchive.zip
-          retention-days: 7
-
-      - name: Export IPA (may require signing assets)
-        run: |
-          cat > $RUNNER_TEMP/exportOptions.plist <<'PLIST'
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key>
-            <string>ad-hoc</string>
-            <key>signingStyle</key>
-            <string>manual</string>
-            <key>compileBitcode</key>
-            <false/>
-            <key>uploadSymbols</key>
-            <false/>
-          </dict>
-          </plist>
-          PLIST
-
-          mkdir -p $RUNNER_TEMP/TaskFlowExport
-
-          xcodebuild -exportArchive \
-            -archivePath $RUNNER_TEMP/TaskFlow.xcarchive \
-            -exportPath $RUNNER_TEMP/TaskFlowExport \
-            -exportOptionsPlist $RUNNER_TEMP/exportOptions.plist \
-            | xcpretty || true
-
-      - name: Debug: list TaskFlowExport (post-export)
-        run: |
-          echo "Listing exported path: $RUNNER_TEMP/TaskFlowExport"
-          ls -la "$RUNNER_TEMP/TaskFlowExport" || true
-          find "$RUNNER_TEMP/TaskFlowExport" -type f -print || true
-
-      - name: Zip exported folder (if exists)
-        run: |
-          if [ -d "$RUNNER_TEMP/TaskFlowExport" ]; then
-            cd "$RUNNER_TEMP"
-            if [ -f TaskFlowExport.zip ]; then rm TaskFlowExport.zip || true; fi
-            zip -r TaskFlowExport.zip TaskFlowExport || true
-          else
-            echo "No TaskFlowExport directory found"
-          fi
+          mkdir -p build/ipa-output
+          cp -r build/TaskFlow.xcarchive/Products/Applications/TaskFlow.app build/ipa-output/
+          cd build/ipa-output
+          mkdir Payload
+          mv TaskFlow.app Payload/
+          zip -r TaskFlow.ipa Payload
+          cd ../..
 
       - name: Upload IPA
-        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: TaskFlow-IPA
-          path: |
-            ${{ runner.temp }}/TaskFlowExport/*.ipa
-            ${{ runner.temp }}/TaskFlowExport.zip
-          retention-days: 7
+          name: TaskFlow.ipa
+          path: build/ipa-output/TaskFlow.ipa

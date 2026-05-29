@@ -113,7 +113,7 @@ struct FocusSessionsView: View {
                         }
                         GeometryReader { geo in
                             ZStack(alignment: .leading) {
-                                Capsule().fill(.separator).frame(height: 4)
+                                Capsule().fill(Color(UIColor.separator)).frame(height: 4)
                                 Capsule().fill(.primary).frame(width: geo.size.width * pct, height: 4)
                             }
                         }
@@ -231,7 +231,7 @@ struct DataManagementView: View {
                     showDeleteConfirm = true
                 } label: {
                     Label("Удалить все задачи (\(appState.tasks.count))", systemImage: "trash")
-                        .foregroundStyle(appState.tasks.isEmpty ? .tertiary : .red)
+                        .foregroundStyle(appState.tasks.isEmpty ? Color(UIColor.tertiaryLabel) : .red)
                 }
                 .disabled(appState.tasks.isEmpty)
 
@@ -240,7 +240,7 @@ struct DataManagementView: View {
                     showDeleteConfirm = true
                 } label: {
                     Label("Удалить все цели (\(appState.goals.count))", systemImage: "trash")
-                        .foregroundStyle(appState.goals.isEmpty ? .tertiary : .red)
+                        .foregroundStyle(appState.goals.isEmpty ? Color(UIColor.tertiaryLabel) : .red)
                 }
                 .disabled(appState.goals.isEmpty)
 
@@ -249,7 +249,7 @@ struct DataManagementView: View {
                     showDeleteConfirm = true
                 } label: {
                     Label("Удалить все привычки (\(appState.habits.count))", systemImage: "trash")
-                        .foregroundStyle(appState.habits.isEmpty ? .tertiary : .red)
+                        .foregroundStyle(appState.habits.isEmpty ? Color(UIColor.tertiaryLabel) : .red)
                 }
                 .disabled(appState.habits.isEmpty)
 
@@ -258,7 +258,7 @@ struct DataManagementView: View {
                     showDeleteConfirm = true
                 } label: {
                     Label("Удалить журнал (\(appState.journal.count))", systemImage: "trash")
-                        .foregroundStyle(appState.journal.isEmpty ? .tertiary : .red)
+                        .foregroundStyle(appState.journal.isEmpty ? Color(UIColor.tertiaryLabel) : .red)
                 }
                 .disabled(appState.journal.isEmpty)
 
@@ -267,7 +267,7 @@ struct DataManagementView: View {
                     showDeleteConfirm = true
                 } label: {
                     Label("Удалить все заметки (\(appState.notes.count))", systemImage: "trash")
-                        .foregroundStyle(appState.notes.isEmpty ? .tertiary : .red)
+                        .foregroundStyle(appState.notes.isEmpty ? Color(UIColor.tertiaryLabel) : .red)
                 }
                 .disabled(appState.notes.isEmpty)
             }
@@ -429,7 +429,7 @@ struct ActivityFeedView: View {
                                     .frame(width: 10, height: 10)
                                 if activity.id != activities.last?.id {
                                     Rectangle()
-                                        .fill(.separator)
+                                        .fill(Color(UIColor.separator))
                                         .frame(width: 1, height: 50)
                                 }
                             }
@@ -449,7 +449,7 @@ struct ActivityFeedView: View {
                                             .font(.caption2)
                                             .foregroundStyle(.secondary)
                                             .lineLimit(1)
-                                        Text("·").foregroundStyle(.separator)
+                                        Text("·").foregroundStyle(Color(UIColor.separator))
                                         Text(timeAgo(activity.date))
                                             .font(.caption2)
                                             .foregroundStyle(.tertiary)
@@ -475,7 +475,7 @@ struct ActivityFeedView: View {
         case "goal": return .primary.opacity(0.7)
         case "journal": return .secondary
         case "note": return .secondary.opacity(0.5)
-        default: return .separator
+        default: return Color(UIColor.separator)
         }
     }
 

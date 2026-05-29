@@ -105,7 +105,7 @@ struct StatisticsView: View {
                 .frame(width: 60, alignment: .leading)
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(.separator).frame(height: 6)
+                    Capsule().fill(Color(UIColor.separator)).frame(height: 6)
                     Capsule().fill(.primary)
                         .frame(width: max(geo.size.width * value, 4), height: 6)
                 }
@@ -179,7 +179,7 @@ struct StatisticsView: View {
                         Text("Выполнено: \(completed)").font(.system(size: 13))
                     }
                     HStack(spacing: 8) {
-                        Circle().fill(.separator).frame(width: 8, height: 8)
+                        Circle().fill(Color(UIColor.separator)).frame(width: 8, height: 8)
                         Text("Активных: \(active)").font(.system(size: 13))
                     }
                     HStack(spacing: 8) {
@@ -233,7 +233,7 @@ struct StatisticsView: View {
                             }
                             GeometryReader { geo in
                                 ZStack(alignment: .leading) {
-                                    Capsule().fill(.separator).frame(height: 4)
+                                    Capsule().fill(Color(UIColor.separator)).frame(height: 4)
                                     Capsule().fill(.primary)
                                         .frame(width: geo.size.width * stat.percentage, height: 4)
                                 }

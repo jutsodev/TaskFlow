@@ -126,7 +126,6 @@ struct ProfileView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
-        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 14))
     }
 
     private var achievementsBanner: some View {
@@ -203,7 +202,7 @@ struct ProfileView: View {
                         isSelected ? AnyShapeStyle(Color.primary) : AnyShapeStyle(Color.clear),
                         in: Circle()
                     )
-                    .overlay(Circle().stroke(isSelected ? .clear : .separator, lineWidth: 1))
+                    .overlay(Circle().stroke(isSelected ? Color.clear : Color(UIColor.separator), lineWidth: 1))
 
                 Text(label)
                     .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
@@ -219,7 +218,7 @@ struct ProfileView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .stroke(isSelected ? .primary.opacity(0.15) : .separator.opacity(0.5), lineWidth: 1)
+                    .stroke(isSelected ? Color.primary.opacity(0.15) : Color(UIColor.separator).opacity(0.5), lineWidth: 1)
             )
         }
     }

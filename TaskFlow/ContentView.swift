@@ -131,7 +131,7 @@ struct AchievementsView: View {
                                 Circle()
                                     .trim(from: 0, to: ach.progress)
                                     .stroke(
-                                        ach.isUnlocked ? Color.primary : Color.separator,
+                                        ach.isUnlocked ? Color.primary : Color(UIColor.separator),
                                         style: StrokeStyle(lineWidth: 3, lineCap: .round)
                                     )
                                     .frame(width: 60, height: 60)

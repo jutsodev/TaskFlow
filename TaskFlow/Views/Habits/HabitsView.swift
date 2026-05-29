@@ -62,7 +62,8 @@ struct HabitsView: View {
 
     private var habitsList: some View {
         VStack(spacing: 10) {
-            ForEach(appState.habits) { habit in
+            ForEach(Array(appState.habits.enumerated()), id: \.element.id) { index, habit in
+                let isCompleted = habit.isCompletedToday()
                 HStack(spacing: 14) {
                     Button {
                         withAnimation(.spring(response: 0.3)) {
@@ -71,15 +72,15 @@ struct HabitsView: View {
                     } label: {
                         ZStack {
                             Circle()
-                                .fill(habit.isCompletedToday() ? Color.primary.opacity(0.1) : Color.clear)
+                                .fill(isCompleted ? Color.primary.opacity(0.1) : Color.clear)
                                 .frame(width: 44, height: 44)
                             Circle()
-                                .stroke(habit.isCompletedToday() ? Color.primary : Color.separator, lineWidth: 2)
+                                .stroke(isCompleted ? Color.primary : Color(UIColor.separator), lineWidth: 2)
                                 .frame(width: 44, height: 44)
                             Image(systemName: habit.icon)
                                 .font(.system(size: 20))
-                                .foregroundStyle(habit.isCompletedToday() ? .primary : .secondary)
-                            if habit.isCompletedToday() {
+                                .foregroundStyle(isCompleted ? .primary : .secondary)
+                            if isCompleted {
                                 Circle()
                                     .fill(.primary)
                                     .frame(width: 16, height: 16)
@@ -96,11 +97,11 @@ struct HabitsView: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(habit.title)
                             .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(habit.isCompletedToday() ? .secondary : .primary)
+                            .foregroundStyle(isCompleted ? .secondary : .primary)
                         HStack(spacing: 8) {
                             Label("\(habit.currentStreak) дн.", systemImage: "flame.fill")
                                 .font(.system(size: 12, weight: .medium))
-                            Text("·").foregroundStyle(.separator)
+                            Text("·").foregroundStyle(Color(UIColor.separator))
                             Text("Всего: \(habit.totalCompleted)")
                                 .font(.system(size: 12))
                                 .foregroundStyle(.tertiary)
@@ -113,7 +114,6 @@ struct HabitsView: View {
                 }
                 .padding(12)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
-                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 14))
                 .onTapGesture { selectedHabit = habit }
                 .contextMenu {
                     Button(role: .destructive) {
@@ -188,7 +188,7 @@ struct AddHabitSheet: View {
                                         )
                                         .overlay(
                                             Circle().stroke(
-                                                selectedIcon == icon ? .primary : .separator,
+                                                selectedIcon == icon ? Color.primary : Color(UIColor.separator),
                                                 lineWidth: 1.5
                                             )
                                         )

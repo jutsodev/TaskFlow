@@ -61,7 +61,6 @@ struct CalendarView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .frame(width: 36, height: 36)
                     .background(.regularMaterial, in: Circle())
-                    .glassEffect(.regular, in: Circle())
             }
 
             Spacer()
@@ -83,7 +82,6 @@ struct CalendarView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .frame(width: 36, height: 36)
                     .background(.regularMaterial, in: Circle())
-                    .glassEffect(.regular, in: Circle())
             }
         }
     }
@@ -135,7 +133,7 @@ struct CalendarView: View {
             Text("\(day.dayNumber)")
                 .font(.system(size: 14, weight: day.isToday ? .bold : .regular, design: .rounded))
                 .foregroundStyle(
-                    !day.isCurrentMonth ? .tertiary :
+                    !day.isCurrentMonth ? Color(UIColor.tertiaryLabel) :
                     isSelected ? Color(.systemBackground) :
                     day.isToday ? .primary : .primary
                 )

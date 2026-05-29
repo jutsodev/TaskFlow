@@ -148,7 +148,7 @@ struct HomeView: View {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Capsule()
-                                .fill(.separator)
+                                .fill(Color(UIColor.separator))
                                 .frame(height: 5)
                             Capsule()
                                 .fill(.primary)
@@ -294,7 +294,7 @@ struct HomeView: View {
                                 let done = habit.isCompletedToday()
                                 Button {
                                     withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
-                                        appState.toggleHabitToday(habit)
+                                        appState.toggleHabitToday(habitId: habit.id)
                                     }
                                 } label: {
                                     VStack(spacing: 8) {
@@ -303,7 +303,7 @@ struct HomeView: View {
                                                 .fill(done ? Color.primary : Color.clear)
                                                 .frame(width: 48, height: 48)
                                             Circle()
-                                                .stroke(done ? Color.clear : Color.separator, lineWidth: 1.5)
+                                                .stroke(done ? Color.clear : Color(UIColor.separator), lineWidth: 1.5)
                                                 .frame(width: 48, height: 48)
                                             Image(systemName: done ? "checkmark" : habit.icon)
                                                 .font(.system(size: done ? 18 : 20, weight: done ? .bold : .regular))

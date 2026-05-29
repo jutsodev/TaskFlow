@@ -138,7 +138,6 @@ struct DeveloperModalView: View {
             .foregroundStyle(.primary)
             .padding(12)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 12))
         }
     }
 

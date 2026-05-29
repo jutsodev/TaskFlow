@@ -99,8 +99,6 @@ struct OnboardingView: View {
                     .foregroundStyle(.primary)
                     .frame(width: 120, height: 120)
                     .background(.regularMaterial, in: Circle())
-                    .glassEffect(.regular, in: Circle())
-                    .symbolEffect(.bounce, value: currentPage)
             }
 
             VStack(spacing: 14) {
@@ -135,7 +133,6 @@ struct OnboardingView: View {
                         .foregroundStyle(.secondary)
                         .frame(width: 100, height: 100)
                         .background(.regularMaterial, in: Circle())
-                        .glassEffect(.regular, in: Circle())
                 }
             }
 
@@ -203,7 +200,6 @@ struct OnboardingView: View {
                         .font(.system(size: 17, weight: .semibold))
                         .frame(width: 50, height: 50)
                         .background(.regularMaterial, in: Circle())
-                        .glassEffect(.regular, in: Circle())
                 }
             }
 
@@ -232,7 +228,6 @@ struct OnboardingView: View {
                 .foregroundStyle(Color(.systemBackground))
                 .frame(maxWidth: .infinity, minHeight: 50)
                 .background(.primary, in: RoundedRectangle(cornerRadius: 14))
-                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 14))
             }
             .disabled(currentPage == 1 && userName.isEmpty)
             .opacity(currentPage == 1 && userName.isEmpty ? 0.4 : 1)

@@ -5,7 +5,6 @@ extension View {
         self
             .padding(16)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
     }
 
     func pillStyle() -> some View {
@@ -117,8 +116,9 @@ struct WeekBarChart: View {
     let data: [(label: String, value: Int, maxValue: Int)]
 
     var body: some View {
+        let indices = Array(data.indices)
         HStack(alignment: .bottom, spacing: 8) {
-            ForEach(data.indices, id: \.self) { i in
+            ForEach(indices, id: \.self) { i in
                 let item = data[i]
                 let height = item.maxValue > 0 ? CGFloat(item.value) / CGFloat(item.maxValue) : 0
                 VStack(spacing: 4) {
@@ -126,7 +126,7 @@ struct WeekBarChart: View {
                         .font(.system(size: 10, weight: .bold, design: .rounded))
                         .foregroundStyle(item.value > 0 ? .primary : .tertiary)
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(item.value > 0 ? Color.primary : Color.separator.opacity(0.3))
+                        .fill(item.value > 0 ? Color.primary : Color(UIColor.separator).opacity(0.3))
                         .frame(height: max(height * 60, 4))
                     Text(item.label)
                         .font(.system(size: 9, weight: .medium))
@@ -148,9 +148,10 @@ struct StreakCalendarView: View {
         let today = cal.startOfDay(for: Date())
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd"
+        let dayIndices = Array(0..<days)
 
         HStack(spacing: 3) {
-            ForEach(0..<days, id: \.self) { offset in
+            ForEach(dayIndices, id: \.self) { offset in
                 let date = cal.date(byAdding: .day, value: -(days - 1 - offset), to: today) ?? today
                 let key = fmt.string(from: date)
                 let done = completedDates.contains(key)
@@ -163,119 +164,7 @@ struct StreakCalendarView: View {
     }
 }
 
-struct TaskDetailSheet: View {
-    let task: TaskItem
-    @EnvironmentObject var appState: AppState
-    @Environment(\.dismiss) var dismiss
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    HStack(spacing: 12) {
-                        Image(systemName: task.category.icon).font(.system(size: 18))
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(task.title).font(.system(size: 17, weight: .semibold))
-                            HStack(spacing: 8) {
-                                Text(task.category.rawValue)
-                                Text("·")
-                                Label(task.priority.rawValue, systemImage: task.priority.icon)
-                                    .foregroundStyle(task.priority.color)
-                            }
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-
-                if !task.description.isEmpty {
-                    Section("Описание") { Text(task.description).font(.system(size: 15)).lineSpacing(4) }
-                }
-
-                if !task.steps.isEmpty {
-                    Section("Этапы (\(task.steps.filter { $0.isCompleted }.count)/\(task.steps.count))") {
-                        ForEach(task.steps) { step in
-                            HStack(spacing: 10) {
-                                Image(systemName: step.isCompleted ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(step.isCompleted ? .secondary : .primary)
-                                Text(step.title).strikethrough(step.isCompleted)
-                            }
-                        }
-                        ProgressView(value: Double(task.steps.filter { $0.isCompleted }.count), total: Double(task.steps.count)).tint(.primary)
-                    }
-                }
-
-                Section("Даты") {
-                    Label("Начало: \(formattedRuDate(task.startDate))", systemImage: "calendar")
-                    if let end = task.endDate {
-                        Label("Окончание: \(formattedRuDate(end))", systemImage: "calendar.badge.clock")
-                    }
-                    Label("Создано: \(formattedRuDate(task.createdAt))", systemImage: "clock")
-                }
-
-                if task.timeSpentSeconds > 0 {
-                    Section("Время") {
-                        Label("Затрачено: \(formatTimeHMS(task.timeSpentSeconds))", systemImage: "timer")
-                    }
-                }
-            }
-            .navigationTitle("Задача")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) { Button("Готово") { dismiss() } }
-            }
-        }
-    }
-}
-
-struct GoalDetailSheet: View {
-    let goal: YearGoal
-    @EnvironmentObject var appState: AppState
-    @Environment(\.dismiss) var dismiss
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    HStack(spacing: 12) {
-                        Image(systemName: goal.category.icon).font(.system(size: 20))
-                        VStack(alignment: .leading) {
-                            Text(goal.title).font(.system(size: 17, weight: .semibold))
-                            Text(goal.category.rawValue).font(.caption).foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        ProgressRing(progress: goal.progress, size: 44, lineWidth: 4)
-                    }
-                }
-                if !goal.description.isEmpty {
-                    Section("Описание") { Text(goal.description).font(.system(size: 15)) }
-                }
-                Section("Прогресс") {
-                    Label("Серия: \(goal.streakDays) дней", systemImage: "flame.fill")
-                    Label("Отмечено: \(goal.completedDays.count) дней", systemImage: "checkmark")
-                    Label("Осталось: \(goal.daysRemaining) дней", systemImage: "clock")
-                    ProgressView(value: goal.progress).tint(.primary)
-                }
-                if !goal.milestones.isEmpty {
-                    Section("Вехи") {
-                        ForEach(goal.milestones) { ms in
-                            HStack {
-                                Image(systemName: ms.isCompleted ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(ms.isCompleted ? .green : .secondary)
-                                Text(ms.title).strikethrough(ms.isCompleted)
-                                Spacer()
-                                Text(shortRuDate(ms.targetDate)).font(.caption2).foregroundStyle(.tertiary)
-                            }
-                        }
-                    }
-                }
-            }
-            .navigationTitle("Цель")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Готово") { dismiss() } } }
-        }
-    }
-}
+// TaskDetailSheet and GoalDetailSheet are defined in their respective view files
 
 func formattedRuDate(_ date: Date) -> String {
     let fmt = DateFormatter()

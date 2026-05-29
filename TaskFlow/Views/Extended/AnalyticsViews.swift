@@ -46,7 +46,7 @@ struct WidgetPreviewView: View {
             .padding(14)
             .frame(width: 170, height: 170)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 20))
+
         }
     }
 
@@ -93,7 +93,7 @@ struct WidgetPreviewView: View {
             .padding(14)
             .frame(width: 350, height: 170)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 20))
+
         }
     }
 
@@ -152,7 +152,7 @@ struct WidgetPreviewView: View {
                                     habit.isCompletedToday() ? Color.primary.opacity(0.1) : Color.clear,
                                     in: Circle()
                                 )
-                                .overlay(Circle().stroke(habit.isCompletedToday() ? .primary : .separator, lineWidth: 1))
+                                .overlay(Circle().stroke(habit.isCompletedToday() ? Color.primary : Color(UIColor.separator), lineWidth: 1))
                         }
                     }
                 }
@@ -160,7 +160,7 @@ struct WidgetPreviewView: View {
             .padding(16)
             .frame(width: 350, height: 370)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 20))
+
         }
     }
 }
@@ -230,7 +230,7 @@ struct MoodAnalyticsView: View {
                                 .font(.system(size: 12))
                         }
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(score > 0 ? Color.primary : Color.separator.opacity(0.3))
+                            .fill(score > 0 ? Color.primary : Color(UIColor.separator).opacity(0.3))
                             .frame(width: 24, height: CGFloat(score) * 12 + 4)
                         Text(dayAbbrev(date))
                             .font(.system(size: 9))
@@ -272,7 +272,7 @@ struct MoodAnalyticsView: View {
                         .frame(width: 70, alignment: .leading)
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            Capsule().fill(.separator).frame(height: 6)
+                            Capsule().fill(Color(UIColor.separator)).frame(height: 6)
                             Capsule().fill(.primary).frame(width: max(geo.size.width * pct, 2), height: 6)
                         }
                     }

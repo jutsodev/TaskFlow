@@ -64,7 +64,6 @@ struct FocusTimerView: View {
             Circle()
                 .fill(.regularMaterial)
                 .frame(width: 230, height: 230)
-                .glassEffect(.regular, in: Circle())
 
             VStack(spacing: 6) {
                 Text(displayTime)
@@ -139,7 +138,7 @@ struct FocusTimerView: View {
                             )
                             .overlay(
                                 Circle().stroke(
-                                    selectedMinutes == mins && selectedSeconds == 0 ? .clear : .separator,
+                                    selectedMinutes == mins && selectedSeconds == 0 ? Color.clear : Color(UIColor.separator),
                                     lineWidth: 1
                                 )
                             )
@@ -356,11 +355,8 @@ struct FocusTimerView: View {
         isRunning = true
         isPaused = false
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            if timerMode == 0 {
-                if remainingSeconds > 0 { remainingSeconds -= 1 }
-                else { completeSession() }
-            } else {
-                stopwatchSeconds += 1
+            Task { @MainActor in
+                self.timerTick()
             }
         }
     }
@@ -373,11 +369,8 @@ struct FocusTimerView: View {
     private func resumeTimer() {
         isPaused = false
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            if timerMode == 0 {
-                if remainingSeconds > 0 { remainingSeconds -= 1 }
-                else { completeSession() }
-            } else {
-                stopwatchSeconds += 1
+            Task { @MainActor in
+                self.timerTick()
             }
         }
     }
@@ -410,5 +403,14 @@ struct FocusTimerView: View {
         isRunning = false
         isPaused = false
         remainingSeconds = selectedMinutes * 60 + selectedSeconds
+    }
+
+    private func timerTick() {
+        if timerMode == 0 {
+            if remainingSeconds > 0 { remainingSeconds -= 1 }
+            else { completeSession() }
+        } else {
+            stopwatchSeconds += 1
+        }
     }
 }

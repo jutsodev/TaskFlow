@@ -105,7 +105,7 @@ struct GoalCard: View {
                 Label("\(goal.streakDays) дн.", systemImage: "flame.fill")
                     .font(.system(size: 12, weight: .medium))
 
-                Text("·").foregroundStyle(.separator)
+                Text("·").foregroundStyle(Color(UIColor.separator))
 
                 Text(goal.dailyAction)
                     .font(.system(size: 12))
@@ -384,7 +384,7 @@ struct CreateGoalView: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(category == cat ? .primary : .separator, lineWidth: 1)
+                                .stroke(category == cat ? Color.primary : Color(UIColor.separator), lineWidth: 1)
                         )
                         .foregroundStyle(category == cat ? .primary : .secondary)
                     }

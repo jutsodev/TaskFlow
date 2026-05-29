@@ -89,10 +89,7 @@ struct CreateTaskView: View {
                 .font(.system(size: 17))
                 .textFieldStyle(.roundedBorder)
         }
-        .transition(.asymmetric(
-            insertion: .move(edge: .trailing).combined(with: .opacity),
-            removal: .move(edge: .leading).combined(with: .opacity)
-        ))
+        .transition(.move(edge: .trailing).combined(with: .opacity))
     }
 
     private var descriptionStep: some View {
@@ -108,10 +105,7 @@ struct CreateTaskView: View {
                 .scrollContentBackground(.hidden)
                 .inputStyle()
         }
-        .transition(.asymmetric(
-            insertion: .move(edge: .trailing).combined(with: .opacity),
-            removal: .move(edge: .leading).combined(with: .opacity)
-        ))
+        .transition(.move(edge: .trailing).combined(with: .opacity))
     }
 
     private var stepsStep: some View {
@@ -152,10 +146,7 @@ struct CreateTaskView: View {
                     .font(.system(size: 15, weight: .medium))
             }
         }
-        .transition(.asymmetric(
-            insertion: .move(edge: .trailing).combined(with: .opacity),
-            removal: .move(edge: .leading).combined(with: .opacity)
-        ))
+        .transition(.move(edge: .trailing).combined(with: .opacity))
     }
 
     private var dateStep: some View {
@@ -189,10 +180,7 @@ struct CreateTaskView: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .transition(.asymmetric(
-            insertion: .move(edge: .trailing).combined(with: .opacity),
-            removal: .move(edge: .leading).combined(with: .opacity)
-        ))
+        .transition(.move(edge: .trailing).combined(with: .opacity))
     }
 
     private var parametersStep: some View {
@@ -220,7 +208,7 @@ struct CreateTaskView: View {
                                 in: Capsule()
                             )
                             .overlay(
-                                Capsule().stroke(priority == p ? p.color : .separator, lineWidth: 1)
+                                Capsule().stroke(priority == p ? p.color : Color(UIColor.separator), lineWidth: 1)
                             )
                             .foregroundStyle(priority == p ? p.color : .secondary)
                         }
@@ -251,7 +239,7 @@ struct CreateTaskView: View {
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(category == cat ? .primary : .separator, lineWidth: 1)
+                                    .stroke(category == cat ? Color.primary : Color(UIColor.separator), lineWidth: 1)
                             )
                             .foregroundStyle(category == cat ? .primary : .secondary)
                         }
@@ -259,10 +247,7 @@ struct CreateTaskView: View {
                 }
             }
         }
-        .transition(.asymmetric(
-            insertion: .move(edge: .trailing).combined(with: .opacity),
-            removal: .move(edge: .leading).combined(with: .opacity)
-        ))
+        .transition(.move(edge: .trailing).combined(with: .opacity))
     }
 
     private var extrasStep: some View {
@@ -333,10 +318,7 @@ struct CreateTaskView: View {
                 .cardStyle()
             }
         }
-        .transition(.asymmetric(
-            insertion: .move(edge: .trailing).combined(with: .opacity),
-            removal: .move(edge: .leading).combined(with: .opacity)
-        ))
+        .transition(.move(edge: .trailing).combined(with: .opacity))
     }
 
     private var bottomNav: some View {

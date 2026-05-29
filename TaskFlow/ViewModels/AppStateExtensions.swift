@@ -227,6 +227,7 @@ extension AppState {
         return MonthGrid(year: year, month: month, days: days)
     }
 
+    @MainActor
     func achievements() -> [Achievement] {
         [
             Achievement(icon: "star.fill", title: "Первая задача", description: "Создайте первую задачу",
@@ -279,6 +280,7 @@ extension AppState {
         }
     }
 
+    @MainActor
     private func exportJSON() -> String {
         struct ExportData: Codable {
             let tasks: [TaskItem]

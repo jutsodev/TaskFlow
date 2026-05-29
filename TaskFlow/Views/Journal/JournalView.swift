@@ -298,7 +298,7 @@ struct CreateJournalEntryView: View {
                                     mood == m ? AnyShapeStyle(Color.primary) : AnyShapeStyle(Color.clear),
                                     in: Circle()
                                 )
-                                .overlay(Circle().stroke(mood == m ? .clear : .separator, lineWidth: 1))
+                                .overlay(Circle().stroke(mood == m ? Color.clear : Color(UIColor.separator), lineWidth: 1))
                                 .foregroundStyle(mood == m ? Color(.systemBackground) : .primary)
                             Text(m.rawValue)
                                 .font(.system(size: 10, weight: .medium))

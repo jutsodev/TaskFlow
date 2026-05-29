@@ -128,7 +128,7 @@ struct TaskEditView: View {
                                 )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .stroke(category == cat ? .primary : .separator, lineWidth: 1)
+                                        .stroke(category == cat ? Color.primary : Color(UIColor.separator), lineWidth: 1)
                                 )
                                 .foregroundStyle(category == cat ? .primary : .secondary)
                             }
@@ -364,7 +364,7 @@ struct DailyPlannerView: View {
                             if !tasks.isEmpty {
                                 Text("\(done)/\(tasks.count)")
                                     .font(.system(size: 9, weight: .medium))
-                                    .foregroundStyle(isSelected ? Color(.systemBackground).opacity(0.7) : .tertiary)
+                                    .foregroundStyle(isSelected ? Color(.systemBackground).opacity(0.7) : Color(UIColor.tertiaryLabel))
                             }
                         }
                         .frame(width: 48)
@@ -431,11 +431,11 @@ struct DailyPlannerView: View {
                     HStack(spacing: 14) {
                         VStack {
                             Circle()
-                                .fill(task.isCompleted ? Color.primary : Color.separator)
+                                .fill(task.isCompleted ? Color.primary : Color(UIColor.separator))
                                 .frame(width: 10, height: 10)
                             if task.id != tasks.last?.id {
                                 Rectangle()
-                                    .fill(.separator)
+                                    .fill(Color(UIColor.separator))
                                     .frame(width: 1)
                             }
                         }
@@ -475,7 +475,6 @@ struct DailyPlannerView: View {
                         }
                         .padding(12)
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-                        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 12))
                     }
                 }
             }
@@ -511,7 +510,6 @@ struct DailyPlannerView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 12))
             .foregroundStyle(.primary)
         }
     }
@@ -610,7 +608,7 @@ struct HabitStreakView: View {
                     let done = habit.completedDates.contains(fmt.string(from: date))
                     Image(systemName: done ? "checkmark.circle.fill" : "circle")
                         .font(.system(size: 16))
-                        .foregroundStyle(done ? .primary : .separator)
+                        .foregroundStyle(done ? Color.primary : Color(UIColor.separator))
                 }
             }
 
@@ -672,7 +670,7 @@ struct GoalTimelineView: View {
 
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        Capsule().fill(.separator).frame(height: 8)
+                        Capsule().fill(Color(UIColor.separator)).frame(height: 8)
                         Capsule().fill(.primary).frame(width: geo.size.width * ratio, height: 8)
                         Circle()
                             .fill(.primary)
