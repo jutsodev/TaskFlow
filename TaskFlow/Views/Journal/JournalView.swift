@@ -368,10 +368,15 @@ struct CreateJournalEntryView: View {
     }
 
     private var highlightsList: some View {
-        ForEach(0..<highlights.count, id: \.self) { i in
-            HighlightInputRow(index: i, text: $highlights[i], canDelete: highlights.count > 1) {
-                withAnimation { highlights.remove(at: i) }
-            }
+        let count = highlights.count
+        return ForEach(0..<count, id: \.self) { i in
+            self.highlightRow(at: i)
+        }
+    }
+
+    private func highlightRow(at i: Int) -> some View {
+        HighlightInputRow(index: i, text: $highlights[i], canDelete: highlights.count > 1) {
+            withAnimation { highlights.remove(at: i) }
         }
     }
 
