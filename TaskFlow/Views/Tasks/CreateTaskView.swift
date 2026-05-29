@@ -110,42 +110,38 @@ struct CreateTaskView: View {
 
     private var stepsStep: some View {
         VStack(alignment: .leading, spacing: 14) {
+            stepsHeader
+            stepsList
+            addStepButton
+        }
+    }
+
+    private var stepsHeader: some View {
+        VStack(alignment: .leading, spacing: 6) {
             Label("Этапы выполнения", systemImage: "list.number")
                 .font(.system(size: 17, weight: .semibold, design: .rounded))
             Text("Разбейте задачу на конкретные шаги")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+        }
+    }
 
-            ForEach(steps.indices, id: \.self) { index in
-                HStack(spacing: 10) {
-                    Text("\(index + 1)")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color(.systemBackground))
-                        .frame(width: 26, height: 26)
-                        .background(.primary, in: Circle())
-
-                    TextField("Шаг \(index + 1)", text: $steps[index])
-                        .font(.system(size: 16))
-                        .textFieldStyle(.roundedBorder)
-
-                    if steps.count > 1 {
-                        Button {
-                            withAnimation { steps.remove(at: index) }
-                        } label: {
-                            Image(systemName: "minus.circle.fill")
-                                .foregroundStyle(.red)
-                        }
-                    }
-                }
-            }
-
-            Button {
-                withAnimation { steps.append("") }
-            } label: {
-                Label("Добавить шаг", systemImage: "plus.circle.fill")
-                    .font(.system(size: 15, weight: .medium))
+    private var stepsList: some View {
+        ForEach(0..<steps.count, id: \.self) { index in
+            StepInputRow(index: index, text: $steps[index], canDelete: steps.count > 1) {
+                withAnimation { steps.remove(at: index) }
             }
         }
+    }
+
+    private var addStepButton: some View {
+        Button {
+            withAnimation { steps.append("") }
+        } label: {
+            Label("Добавить шаг", systemImage: "plus.circle.fill")
+                .font(.system(size: 15, weight: .medium))
+        }
+    }
         
     }
 
@@ -372,5 +368,31 @@ struct CreateTaskView: View {
         )
         appState.addTask(task)
         dismiss()
+    }
+}
+
+struct StepInputRow: View {
+    let index: Int
+    @Binding var text: String
+    let canDelete: Bool
+    let onDelete: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Text("\(index + 1)")
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(Color(.systemBackground))
+                .frame(width: 26, height: 26)
+                .background(.primary, in: Circle())
+            TextField("Шаг \(index + 1)", text: $text)
+                .font(.system(size: 16))
+                .textFieldStyle(.roundedBorder)
+            if canDelete {
+                Button(action: onDelete) {
+                    Image(systemName: "minus.circle.fill")
+                        .foregroundStyle(.red)
+                }
+            }
+        }
     }
 }
