@@ -1,0 +1,59 @@
+name: Build TaskFlow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Resolve dependencies
+        run: xcodebuild -resolvePackageDependencies -project TaskFlow.xcodeproj -scheme TaskFlow
+
+      - name: Build for iOS Simulator
+        run: |
+          xcodebuild build \
+            -project TaskFlow.xcodeproj \
+            -scheme TaskFlow \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -configuration Debug \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcpretty || true
+
+      - name: Build for Release (Archive)
+        run: |
+          xcodebuild archive \
+            -project TaskFlow.xcodeproj \
+            -scheme TaskFlow \
+            -archivePath $RUNNER_TEMP/TaskFlow.xcarchive \
+            -destination 'generic/platform=iOS' \
+            -configuration Release \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            SKIP_INSTALL=NO \
+            | xcpretty || true
+
+      - name: Upload Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: TaskFlow-Archive
+          path: ${{ runner.temp }}/TaskFlow.xcarchive
+          retention-days: 7
