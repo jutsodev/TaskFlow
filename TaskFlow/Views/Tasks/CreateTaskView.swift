@@ -142,8 +142,6 @@ struct CreateTaskView: View {
                 .font(.system(size: 15, weight: .medium))
         }
     }
-        
-    }
 
     private var dateStep: some View {
         VStack(alignment: .leading, spacing: 14) {
