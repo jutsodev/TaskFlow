@@ -89,7 +89,7 @@ struct CreateTaskView: View {
                 .font(.system(size: 17))
                 .textFieldStyle(.roundedBorder)
         }
-        .transition(AnyTransition.move(edge: .trailing))
+        
     }
 
     private var descriptionStep: some View {
@@ -105,7 +105,7 @@ struct CreateTaskView: View {
                 .scrollContentBackground(.hidden)
                 .inputStyle()
         }
-        .transition(AnyTransition.move(edge: .trailing))
+        
     }
 
     private var stepsStep: some View {
@@ -146,7 +146,7 @@ struct CreateTaskView: View {
                     .font(.system(size: 15, weight: .medium))
             }
         }
-        .transition(AnyTransition.move(edge: .trailing))
+        
     }
 
     private var dateStep: some View {
@@ -177,10 +177,10 @@ struct CreateTaskView: View {
                         .tint(.primary)
                 }
                 .cardStyle()
-                .transition(.opacity)
+                
             }
         }
-        .transition(AnyTransition.move(edge: .trailing))
+        
     }
 
     private var parametersStep: some View {
@@ -247,7 +247,7 @@ struct CreateTaskView: View {
                 }
             }
         }
-        .transition(AnyTransition.move(edge: .trailing))
+        
     }
 
     private var extrasStep: some View {
@@ -318,7 +318,7 @@ struct CreateTaskView: View {
                 .cardStyle()
             }
         }
-        .transition(AnyTransition.move(edge: .trailing))
+        
     }
 
     private var bottomNav: some View {

@@ -368,21 +368,9 @@ struct CreateJournalEntryView: View {
     }
 
     private var highlightsList: some View {
-        let indices = Array(highlights.indices)
-        return ForEach(indices, id: \.self) { i in
-            HStack(spacing: 10) {
-                Text("\(i + 1)")
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color(.systemBackground))
-                    .frame(width: 24, height: 24)
-                    .background(.primary, in: Circle())
-                TextField("Достижение", text: $highlights[i])
-                    .textFieldStyle(.roundedBorder)
-                if highlights.count > 1 {
-                    Button { withAnimation { highlights.remove(at: i) } } label: {
-                        Image(systemName: "minus.circle.fill").foregroundStyle(.red)
-                    }
-                }
+        ForEach(0..<highlights.count, id: \.self) { i in
+            HighlightInputRow(index: i, text: $highlights[i], canDelete: highlights.count > 1) {
+                withAnimation { highlights.remove(at: i) }
             }
         }
     }
@@ -406,5 +394,29 @@ struct CreateJournalEntryView: View {
         )
         appState.addJournalEntry(entry)
         dismiss()
+    }
+}
+
+struct HighlightInputRow: View {
+    let index: Int
+    @Binding var text: String
+    let canDelete: Bool
+    let onDelete: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Text("\(index + 1)")
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundStyle(Color(.systemBackground))
+                .frame(width: 24, height: 24)
+                .background(.primary, in: Circle())
+            TextField("Достижение", text: $text)
+                .textFieldStyle(.roundedBorder)
+            if canDelete {
+                Button(action: onDelete) {
+                    Image(systemName: "minus.circle.fill").foregroundStyle(.red)
+                }
+            }
+        }
     }
 }

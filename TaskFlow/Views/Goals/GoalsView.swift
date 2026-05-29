@@ -432,23 +432,9 @@ struct CreateGoalView: View {
     }
 
     private var goalMilestonesList: some View {
-        let indices = Array(milestones.indices)
-        return ForEach(indices, id: \.self) { index in
-            HStack(spacing: 10) {
-                Text("\(index + 1)")
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color(.systemBackground))
-                    .frame(width: 26, height: 26)
-                    .background(.primary, in: Circle())
-                TextField("Веха \(index + 1)", text: $milestones[index])
-                    .textFieldStyle(.roundedBorder)
-                if milestones.count > 1 {
-                    Button {
-                        withAnimation { milestones.remove(at: index) }
-                    } label: {
-                        Image(systemName: "minus.circle.fill").foregroundStyle(.red)
-                    }
-                }
+        ForEach(0..<milestones.count, id: \.self) { index in
+            MilestoneInputRow(index: index, text: $milestones[index], canDelete: milestones.count > 1) {
+                withAnimation { milestones.remove(at: index) }
             }
         }
     }
@@ -482,5 +468,29 @@ struct CreateGoalView: View {
         )
         appState.addGoal(goal)
         dismiss()
+    }
+}
+
+struct MilestoneInputRow: View {
+    let index: Int
+    @Binding var text: String
+    let canDelete: Bool
+    let onDelete: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Text("\(index + 1)")
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(Color(.systemBackground))
+                .frame(width: 26, height: 26)
+                .background(.primary, in: Circle())
+            TextField("Веха \(index + 1)", text: $text)
+                .textFieldStyle(.roundedBorder)
+            if canDelete {
+                Button(action: onDelete) {
+                    Image(systemName: "minus.circle.fill").foregroundStyle(.red)
+                }
+            }
+        }
     }
 }
