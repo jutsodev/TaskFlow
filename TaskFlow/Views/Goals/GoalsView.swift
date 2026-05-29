@@ -432,10 +432,15 @@ struct CreateGoalView: View {
     }
 
     private var goalMilestonesList: some View {
-        ForEach(0..<milestones.count, id: \.self) { index in
-            MilestoneInputRow(index: index, text: $milestones[index], canDelete: milestones.count > 1) {
-                withAnimation { milestones.remove(at: index) }
-            }
+        let count = milestones.count
+        return ForEach(0..<count, id: \.self) { index in
+            self.milestoneRow(at: index)
+        }
+    }
+
+    private func milestoneRow(at index: Int) -> some View {
+        MilestoneInputRow(index: index, text: $milestones[index], canDelete: milestones.count > 1) {
+            withAnimation { milestones.remove(at: index) }
         }
     }
 

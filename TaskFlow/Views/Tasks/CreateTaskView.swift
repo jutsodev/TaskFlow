@@ -127,10 +127,15 @@ struct CreateTaskView: View {
     }
 
     private var stepsList: some View {
-        ForEach(0..<steps.count, id: \.self) { index in
-            StepInputRow(index: index, text: $steps[index], canDelete: steps.count > 1) {
-                withAnimation { steps.remove(at: index) }
-            }
+        let count = steps.count
+        return ForEach(0..<count, id: \.self) { index in
+            self.stepRow(at: index)
+        }
+    }
+
+    private func stepRow(at index: Int) -> some View {
+        StepInputRow(index: index, text: $steps[index], canDelete: steps.count > 1) {
+            withAnimation { steps.remove(at: index) }
         }
     }
 
