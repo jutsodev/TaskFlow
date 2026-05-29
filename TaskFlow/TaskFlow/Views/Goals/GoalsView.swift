@@ -440,12 +440,8 @@ struct CreateGoalView: View {
 
     private func milestoneRow(at index: Int) -> some View {
         MilestoneInputRow(index: index, text: $milestones[index], canDelete: milestones.count > 1) {
-            removeMilestone(at: index)
+            withAnimation { milestones.remove(at: index) }
         }
-    }
-
-    private func removeMilestone(at index: Int) {
-        withAnimation { _ = milestones.remove(at: index) }
     }
 
     private var addMilestoneButton: some View {

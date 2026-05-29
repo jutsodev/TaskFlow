@@ -135,12 +135,8 @@ struct CreateTaskView: View {
 
     private func stepRow(at index: Int) -> some View {
         StepInputRow(index: index, text: $steps[index], canDelete: steps.count > 1) {
-            removeStep(at: index)
+            withAnimation { steps.remove(at: index) }
         }
-    }
-
-    private func removeStep(at index: Int) {
-        withAnimation { _ = steps.remove(at: index) }
     }
 
     private var addStepButton: some View {

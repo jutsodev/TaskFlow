@@ -376,12 +376,8 @@ struct CreateJournalEntryView: View {
 
     private func highlightRow(at i: Int) -> some View {
         HighlightInputRow(index: i, text: $highlights[i], canDelete: highlights.count > 1) {
-            removeHighlight(at: i)
+            withAnimation { highlights.remove(at: i) }
         }
-    }
-
-    private func removeHighlight(at i: Int) {
-        withAnimation { _ = highlights.remove(at: i) }
     }
 
     private var addHighlightButton: some View {
