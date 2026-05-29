@@ -51,11 +51,30 @@ jobs:
             SKIP_INSTALL=NO \
             | xcpretty || true
 
+      - name: Debug: list RUNNER_TEMP (post-archive)
+        run: |
+          echo "RUNNER_TEMP=$RUNNER_TEMP"
+          ls -la "$RUNNER_TEMP" || true
+          find "$RUNNER_TEMP" -maxdepth 3 -type f -print || true
+
+      - name: Zip xcarchive for upload (if exists)
+        run: |
+          if [ -d "$RUNNER_TEMP/TaskFlow.xcarchive" ]; then
+            cd "$RUNNER_TEMP"
+            if [ -f TaskFlow.xcarchive.zip ]; then rm TaskFlow.xcarchive.zip || true; fi
+            zip -r TaskFlow.xcarchive.zip TaskFlow.xcarchive || true
+            echo "ZIPPED"
+          else
+            echo "No xcarchive directory found"
+          fi
+
       - name: Upload Archive
         uses: actions/upload-artifact@v4
         with:
           name: TaskFlow-Archive
-          path: ${{ runner.temp }}/TaskFlow.xcarchive
+          path: |
+            ${{ runner.temp }}/TaskFlow.xcarchive
+            ${{ runner.temp }}/TaskFlow.xcarchive.zip
           retention-days: 7
 
       - name: Export IPA (may require signing assets)
@@ -85,10 +104,28 @@ jobs:
             -exportOptionsPlist $RUNNER_TEMP/exportOptions.plist \
             | xcpretty || true
 
+      - name: Debug: list TaskFlowExport (post-export)
+        run: |
+          echo "Listing exported path: $RUNNER_TEMP/TaskFlowExport"
+          ls -la "$RUNNER_TEMP/TaskFlowExport" || true
+          find "$RUNNER_TEMP/TaskFlowExport" -type f -print || true
+
+      - name: Zip exported folder (if exists)
+        run: |
+          if [ -d "$RUNNER_TEMP/TaskFlowExport" ]; then
+            cd "$RUNNER_TEMP"
+            if [ -f TaskFlowExport.zip ]; then rm TaskFlowExport.zip || true; fi
+            zip -r TaskFlowExport.zip TaskFlowExport || true
+          else
+            echo "No TaskFlowExport directory found"
+          fi
+
       - name: Upload IPA
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: TaskFlow-IPA
-          path: ${{ runner.temp }}/TaskFlowExport/*.ipa
+          path: |
+            ${{ runner.temp }}/TaskFlowExport/*.ipa
+            ${{ runner.temp }}/TaskFlowExport.zip
           retention-days: 7
