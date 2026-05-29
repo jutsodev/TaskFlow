@@ -415,37 +415,49 @@ struct CreateGoalView: View {
 
     private var goalMilestonesStep: some View {
         VStack(alignment: .leading, spacing: 14) {
+            goalMilestonesHeader
+            goalMilestonesList
+            addMilestoneButton
+        }
+    }
+
+    private var goalMilestonesHeader: some View {
+        VStack(alignment: .leading, spacing: 6) {
             Label("Вехи", systemImage: "flag.fill")
                 .font(.system(size: 17, weight: .semibold, design: .rounded))
             Text("Промежуточные цели на пути к результату")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+        }
+    }
 
-            ForEach(milestones.indices, id: \.self) { index in
-                HStack(spacing: 10) {
-                    Text("\(index + 1)")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color(.systemBackground))
-                        .frame(width: 26, height: 26)
-                        .background(.primary, in: Circle())
-                    TextField("Веха \(index + 1)", text: $milestones[index])
-                        .textFieldStyle(.roundedBorder)
-                    if milestones.count > 1 {
-                        Button {
-                            withAnimation { milestones.remove(at: index) }
-                        } label: {
-                            Image(systemName: "minus.circle.fill").foregroundStyle(.red)
-                        }
+    private var goalMilestonesList: some View {
+        ForEach(milestones.indices, id: \.self) { index in
+            HStack(spacing: 10) {
+                Text("\(index + 1)")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color(.systemBackground))
+                    .frame(width: 26, height: 26)
+                    .background(.primary, in: Circle())
+                TextField("Веха \(index + 1)", text: $milestones[index])
+                    .textFieldStyle(.roundedBorder)
+                if milestones.count > 1 {
+                    Button {
+                        withAnimation { milestones.remove(at: index) }
+                    } label: {
+                        Image(systemName: "minus.circle.fill").foregroundStyle(.red)
                     }
                 }
             }
+        }
+    }
 
-            Button {
-                withAnimation { milestones.append("") }
-            } label: {
-                Label("Добавить веху", systemImage: "plus.circle.fill")
-                    .font(.system(size: 15, weight: .medium))
-            }
+    private var addMilestoneButton: some View {
+        Button {
+            withAnimation { milestones.append("") }
+        } label: {
+            Label("Добавить веху", systemImage: "plus.circle.fill")
+                .font(.system(size: 15, weight: .medium))
         }
     }
 

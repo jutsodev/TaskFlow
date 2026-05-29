@@ -27,39 +27,47 @@ extension AppState {
         }
     }
 
+    @MainActor
     func addJournalEntry(_ entry: JournalEntry) {
         var j = journal; j.append(entry); journal = j
     }
 
+    @MainActor
     func deleteJournalEntry(_ entry: JournalEntry) {
         var j = journal; j.removeAll { $0.id == entry.id }; journal = j
     }
 
+    @MainActor
     func updateJournalEntry(_ entry: JournalEntry) {
         var j = journal
         if let i = j.firstIndex(where: { $0.id == entry.id }) { j[i] = entry }
         journal = j
     }
 
+    @MainActor
     func journalForDate(_ date: Date) -> JournalEntry? {
         let cal = Calendar.current
         return journal.first { cal.isDate($0.date, inSameDayAs: date) }
     }
 
+    @MainActor
     func addNote(_ note: NoteItem) {
         var n = notes; n.append(note); notes = n
     }
 
+    @MainActor
     func deleteNote(_ note: NoteItem) {
         var n = notes; n.removeAll { $0.id == note.id }; notes = n
     }
 
+    @MainActor
     func updateNote(_ note: NoteItem) {
         var n = notes
         if let i = n.firstIndex(where: { $0.id == note.id }) { n[i] = note }
         notes = n
     }
 
+    @MainActor
     func toggleNotePin(_ note: NoteItem) {
         var n = notes
         if let i = n.firstIndex(where: { $0.id == note.id }) { n[i].isPinned.toggle() }
@@ -91,6 +99,7 @@ extension AppState {
         }
     }
 
+    @MainActor
     func weekSummary() -> WeekSummary {
         let cal = Calendar.current
         let today = cal.startOfDay(for: Date())
@@ -269,6 +278,7 @@ extension AppState {
         ]
     }
 
+    @MainActor
     func exportData(format: ExportFormat) -> String {
         switch format {
         case .json:

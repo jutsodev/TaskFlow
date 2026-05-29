@@ -351,35 +351,47 @@ struct CreateJournalEntryView: View {
 
     private var highlightsStep: some View {
         VStack(alignment: .leading, spacing: 14) {
+            highlightsHeader
+            highlightsList
+            addHighlightButton
+        }
+    }
+
+    private var highlightsHeader: some View {
+        VStack(alignment: .leading, spacing: 6) {
             Text("Достижения дня")
                 .font(.system(size: 20, weight: .bold, design: .rounded))
             Text("Чем вы гордитесь сегодня?")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+        }
+    }
 
-            ForEach(highlights.indices, id: \.self) { i in
-                HStack(spacing: 10) {
-                    Text("\(i + 1)")
-                        .font(.system(size: 12, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color(.systemBackground))
-                        .frame(width: 24, height: 24)
-                        .background(.primary, in: Circle())
-                    TextField("Достижение", text: $highlights[i])
-                        .textFieldStyle(.roundedBorder)
-                    if highlights.count > 1 {
-                        Button { withAnimation { highlights.remove(at: i) } } label: {
-                            Image(systemName: "minus.circle.fill").foregroundStyle(.red)
-                        }
+    private var highlightsList: some View {
+        ForEach(highlights.indices, id: \.self) { i in
+            HStack(spacing: 10) {
+                Text("\(i + 1)")
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color(.systemBackground))
+                    .frame(width: 24, height: 24)
+                    .background(.primary, in: Circle())
+                TextField("Достижение", text: $highlights[i])
+                    .textFieldStyle(.roundedBorder)
+                if highlights.count > 1 {
+                    Button { withAnimation { highlights.remove(at: i) } } label: {
+                        Image(systemName: "minus.circle.fill").foregroundStyle(.red)
                     }
                 }
             }
+        }
+    }
 
-            Button {
-                withAnimation { highlights.append("") }
-            } label: {
-                Label("Добавить", systemImage: "plus.circle.fill")
-                    .font(.system(size: 14, weight: .medium))
-            }
+    private var addHighlightButton: some View {
+        Button {
+            withAnimation { highlights.append("") }
+        } label: {
+            Label("Добавить", systemImage: "plus.circle.fill")
+                .font(.system(size: 14, weight: .medium))
         }
     }
 

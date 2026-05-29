@@ -146,8 +146,11 @@ struct StreakCalendarView: View {
     var body: some View {
         let cal = Calendar.current
         let today = cal.startOfDay(for: Date())
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd"
+        let fmt: DateFormatter = {
+            let f = DateFormatter()
+            f.dateFormat = "yyyy-MM-dd"
+            return f
+        }()
         let dayIndices = Array(0..<days)
 
         HStack(spacing: 3) {
